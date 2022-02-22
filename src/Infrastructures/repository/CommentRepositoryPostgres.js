@@ -1,5 +1,6 @@
 const RegisteredComment = require('../../Domains/comments/entities/RegisteredComment');
 const CommentRepository = require('../../Domains/comments/CommentRepository');
+const NotFoundError = require('../../Commons/exceptions/NotFoundError');
 
 class CommentRepositoryPostgres extends CommentRepository {
   constructor(pool, idGenerator) {
@@ -20,6 +21,19 @@ class CommentRepositoryPostgres extends CommentRepository {
     const result = await this._pool.query(query);
 
     return new RegisteredComment({ ...result.rows[0] });
+  }
+
+  async verifyAvailableThread(threadId) {
+    const query = {
+      text: 'SELECT id FROM threads WHERE id = $1',
+      values: [threadId],
+    };
+
+    const result = await this._pool.query(query);
+    console.log(result.rowCount);
+    if (!result.rowCount) {
+      throw new NotFoundError('thread tidak tersedia');
+    }
   }
 }
 

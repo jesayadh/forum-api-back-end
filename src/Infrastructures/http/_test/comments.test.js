@@ -42,10 +42,23 @@ describe('/comments endpoint', () => {
       });
       const { accessToken } = getAuth.result.data;
 
+      const getThread = await server.inject({
+        method: 'POST',
+        url: '/threads',
+        payload: {
+          title: 'dicoding',
+          body: 'Dicoding Indonesia',
+        },
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+      const { id } = getThread.result.data.addedThread;
+
       // Action
       const response = await server.inject({
         method: 'POST',
-        url: '/threads/thread-123/comments',
+        url: '/threads/'+id+'/comments',
         payload: requestPayload,
         headers: {
           Authorization: `Bearer ${accessToken}`,
@@ -88,10 +101,23 @@ describe('/comments endpoint', () => {
       });
       const { accessToken } = getAuth.result.data;
 
+      const getThread = await server.inject({
+        method: 'POST',
+        url: '/threads',
+        payload: {
+          title: 'dicoding',
+          body: 'Dicoding Indonesia',
+        },
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+      const { id } = getThread.result.data.addedThread;
+
       // Action
       const response = await server.inject({
         method: 'POST',
-        url: '/threads/thread-123/comments',
+        url: '/threads/'+id+'/comments',
         payload: requestPayload,
         headers: {
           Authorization: `Bearer ${accessToken}`,

@@ -1,4 +1,6 @@
 const CommentsTableTestHelper = require('../../../../tests/CommentsTableTestHelper');
+const ThreadsTableTestHelper = require('../../../../tests/ThreadsTableTestHelper');
+const NotFoundError = require('../../../Commons/exceptions/NotFoundError');
 const RegisterComment = require('../../../Domains/comments/entities/RegisterComment');
 const RegisteredComment = require('../../../Domains/comments/entities/RegisteredComment');
 const pool = require('../../database/postgres/pool');
@@ -11,6 +13,25 @@ describe('CommentRepositoryPostgres', () => {
 
   afterAll(async () => {
     await pool.end();
+  });
+
+  describe('verifyAvailableThread function', () => {
+    it('should throw NotFoundError when threadId not available', async () => {
+      // Arrange
+      const commentRepositoryPostgres = new CommentRepositoryPostgres(pool, {});
+
+      // Action & Assert
+      await expect(commentRepositoryPostgres.verifyAvailableThread('thread-123')).rejects.toThrowError(NotFoundError);
+    });
+
+    it('should not throw NotFoundError when threadId available', async () => {
+      // Arrange
+      await ThreadsTableTestHelper.addThread({ id: 'thread-123' }); // memasukan thread baru dengan threadId thread-123
+      const commentRepositoryPostgres = new CommentRepositoryPostgres(pool, {});
+
+      // Action & Assert
+      await expect(commentRepositoryPostgres.verifyAvailableThread('thread-123')).resolves.not.toThrowError(NotFoundError);
+    });
   });
 
   describe('addComment function', () => {
