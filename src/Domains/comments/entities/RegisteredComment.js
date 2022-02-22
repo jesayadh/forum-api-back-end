@@ -11,11 +11,11 @@ class RegisteredThread {
   
     _verifyPayload({ id, content, owner }) {
       if (!id || !content || !owner) {
-        throw new Error('REGISTERED_THREAD.NOT_CONTAIN_NEEDED_PROPERTY');
+        throw new Error('REGISTERED_COMMENT.NOT_CONTAIN_NEEDED_PROPERTY');
       }
   
       if (typeof id !== 'string' || typeof content !== 'string' || typeof owner !== 'string') {
-        throw new Error('REGISTERED_THREAD.NOT_MEET_DATA_TYPE_SPECIFICATION');
+        throw new Error('REGISTERED_COMMENT.NOT_MEET_DATA_TYPE_SPECIFICATION');
       }
     }
   }

@@ -18,8 +18,9 @@ describe('CommentRepositoryPostgres', () => {
       // Arrange
       const registerComment = new RegisterComment({
         content: 'dicoding',
-      },
-      {threadId:'thread-123',owner:'user-123'});
+        threadId:'thread-123',
+        owner:'user-123'
+      });
       const fakeIdGenerator = () => '123'; // stub!
       const commentRepositoryPostgres = new CommentRepositoryPostgres(pool, fakeIdGenerator);
 
@@ -35,7 +36,9 @@ describe('CommentRepositoryPostgres', () => {
       // Arrange
       const registerComment = new RegisterComment({
         content: 'dicoding',
-      },{threadId:'thread-123',owner : 'user-123'});
+        threadId:'thread-123',
+        owner:'user-123'
+      });
       const fakeIdGenerator = () => '123'; // stub!
       const commentRepositoryPostgres = new CommentRepositoryPostgres(pool, fakeIdGenerator);
 

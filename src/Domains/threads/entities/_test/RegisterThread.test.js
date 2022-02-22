@@ -5,10 +5,10 @@ describe('a RegisterThread entities', () => {
     // Arrange
     const payload = {
       title: 'abc',
+      owner: 'user-123'
     };
-    const owner = 'user-123';
     // Action and Assert
-    expect(() => new RegisterThread(payload,{owner})).toThrowError('REGISTER_THREAD.NOT_CONTAIN_NEEDED_PROPERTY');
+    expect(() => new RegisterThread(payload)).toThrowError('REGISTER_THREAD.NOT_CONTAIN_NEEDED_PROPERTY');
   });
 
   it('should throw error when payload did not meet data type specification', () => {
@@ -16,11 +16,11 @@ describe('a RegisterThread entities', () => {
     const payload = {
       title: 123,
       body: 'abc',
+      owner: {}
     };
-    const owner = {};
 
     // Action and Assert
-    expect(() => new RegisterThread(payload,{owner})).toThrowError('REGISTER_THREAD.NOT_MEET_DATA_TYPE_SPECIFICATION');
+    expect(() => new RegisterThread(payload)).toThrowError('REGISTER_THREAD.NOT_MEET_DATA_TYPE_SPECIFICATION');
   });
 
   it('should create registerThread object correctly', () => {
@@ -28,15 +28,15 @@ describe('a RegisterThread entities', () => {
     const payload = {
       title: 'dicoding',
       body: 'abc',
+      owner: 'user-123'
     };
-    const tempOwner = 'user-123';
 
     // Action
-    const { title, body, owner } = new RegisterThread(payload,{owner: tempOwner});
+    const { title, body, owner } = new RegisterThread(payload);
 
     // Assert
     expect(title).toEqual(payload.title);
     expect(body).toEqual(payload.body);
-    expect(owner).toEqual(owner);
+    expect(owner).toEqual(payload.owner);
   });
 });

@@ -19,8 +19,8 @@ describe('ThreadRepositoryPostgres', () => {
       const registerThread = new RegisterThread({
         title: 'dicoding',
         body: 'Dicoding Indonesia',
-      },
-      {owner:'user-123'});
+        owner:'user-123'
+      });
       const fakeIdGenerator = () => '123'; // stub!
       const threadRepositoryPostgres = new ThreadRepositoryPostgres(pool, fakeIdGenerator);
 
@@ -37,7 +37,8 @@ describe('ThreadRepositoryPostgres', () => {
       const registerThread = new RegisterThread({
         title: 'dicoding',
         body: 'Dicoding Indonesia',
-      },{owner : 'user-123'});
+        owner : 'user-123'
+      });
       const fakeIdGenerator = () => '123'; // stub!
       const threadRepositoryPostgres = new ThreadRepositoryPostgres(pool, fakeIdGenerator);
 

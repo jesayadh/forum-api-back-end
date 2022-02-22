@@ -1,7 +1,7 @@
 class RegisterThread {
-    constructor(payload,{ owner }) {
-      const { title, body } = payload;
-      this._verifyPayload({ title, body, owner });
+    constructor(payload) {
+      this._verifyPayload(payload);
+      const { title, body, owner } = payload;
 
       this.title = title;
       this.body = body;
