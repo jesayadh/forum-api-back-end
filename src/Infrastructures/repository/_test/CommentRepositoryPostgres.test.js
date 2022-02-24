@@ -73,5 +73,45 @@ describe('CommentRepositoryPostgres', () => {
         owner: 'user-123',
       }));
     });
+
+
+    describe('checkAvailabilityComment function', () => {
+      it('should throw NotFoundError if comment not available', async () => {
+        // Arrange
+        const commentRepository = new CommentRepositoryPostgres(pool);
+        const comment = 'comment';
+  
+        // Action & Assert
+        await expect(commentRepository.checkAvailabilityComment(comment))
+          .rejects.toThrow(NotFoundError);
+      });
+  
+      it('should not throw NotFoundError if comment available', async () => {
+        // Arrange
+        const commentRepository = new CommentRepositoryPostgres(pool);
+        const content = 'content';
+        await CommentsTableTestHelper.addComment(content);
+  
+        // Action & Assert
+        await expect(commentRepository.checkAvailabilityComment("comment-123"))
+          .resolves.not.toThrow(NotFoundError);
+      });
+    });
+
+    describe('deleteComment', () => {
+      it('should delete comment from database', async () => {
+        // Arrange
+        const commentRepository = new CommentRepositoryPostgres(pool);
+        const comment = 'comment';
+        await CommentsTableTestHelper.addComment(comment);
+  
+        // Action
+        await commentRepository.deleteComment(comment);
+  
+        // Assert
+        const comments = await CommentsTableTestHelper.findCommentsById(comment);
+        expect(comments).toHaveLength(0);
+      });
+    });
   });
 });
