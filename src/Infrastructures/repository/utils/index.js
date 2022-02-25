@@ -24,4 +24,16 @@ const mapCommentsToModel = ({
     content,
 });
 
-module.exports = { mapThreadToModel,mapCommentsToModel };
+const mapRepliesToModel = ({
+    id,
+    username,
+    date,
+    content,
+}) => ({
+    id,
+    username,
+    date,
+    content,
+});
+
+module.exports = { mapThreadToModel,mapCommentsToModel,mapRepliesToModel };

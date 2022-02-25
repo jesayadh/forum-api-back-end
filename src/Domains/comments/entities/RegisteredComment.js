@@ -1,4 +1,4 @@
-class RegisteredThread {
+class RegisteredComment {
     constructor(payload) {
       this._verifyPayload(payload);
   
@@ -20,5 +20,5 @@ class RegisteredThread {
     }
   }
   
-  module.exports = RegisteredThread;
+  module.exports = RegisteredComment;
   

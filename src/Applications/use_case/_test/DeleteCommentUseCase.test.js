@@ -10,7 +10,7 @@ describe('DeleteCommentUseCase', () => {
     // Action & Assert
     await expect(deleteCommentUseCase.execute(useCasePayload))
       .rejects
-      .toThrowError('DELETE_COMMENT_USE_CASE.NOT_CONTAIN_REFRESH_TOKEN');
+      .toThrowError('DELETE_COMMENT_USE_CASE.NOT_CONTAIN_COMMENT_ID');
   });
 
   it('should throw error if commentId not string', async () => {

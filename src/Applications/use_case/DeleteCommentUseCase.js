@@ -8,7 +8,7 @@ class DeleteCommentUseCase {
   async execute(useCasePayload) {
     this._validatePayload(useCasePayload);
     const { owner,commentId } = useCasePayload;
-    await this._commentRepository.checkAvailabilityComment(commentId);
+    await this._commentRepository.verifyAvailableComment(commentId);
     await this._commentRepository.verifyCommentOwner(commentId,owner);
     await this._commentRepository.deleteComment(commentId);
   }
@@ -16,7 +16,7 @@ class DeleteCommentUseCase {
   _validatePayload(payload) {
     const { commentId } = payload;
     if (!commentId) {
-      throw new Error('DELETE_COMMENT_USE_CASE.NOT_CONTAIN_REFRESH_TOKEN');
+      throw new Error('DELETE_COMMENT_USE_CASE.NOT_CONTAIN_COMMENT_ID');
     }
 
     if (typeof commentId !== 'string') {

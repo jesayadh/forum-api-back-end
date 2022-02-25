@@ -82,7 +82,7 @@ describe('CommentRepositoryPostgres', () => {
         const comment = 'comment';
   
         // Action & Assert
-        await expect(commentRepository.checkAvailabilityComment(comment))
+        await expect(commentRepository.verifyAvailableComment(comment))
           .rejects.toThrow(NotFoundError);
       });
   
@@ -93,7 +93,7 @@ describe('CommentRepositoryPostgres', () => {
         await CommentsTableTestHelper.addComment(content);
   
         // Action & Assert
-        await expect(commentRepository.checkAvailabilityComment("comment-123"))
+        await expect(commentRepository.verifyAvailableComment("comment-123"))
           .resolves.not.toThrow(NotFoundError);
       });
     });
