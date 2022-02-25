@@ -39,7 +39,7 @@ class CommentRepositoryPostgres extends CommentRepository {
 
   async verifyCommentOwner(id, owner) {
     const query = {
-      text: 'SELECT * FROM comments WHERE id = $1',
+      text: 'SELECT * FROM comments WHERE id = $1 and is_delete IS NULL',
       values: [id],
     };
     const result = await this._pool.query(query);
@@ -51,7 +51,7 @@ class CommentRepositoryPostgres extends CommentRepository {
 
   async checkAvailabilityComment(id) {
     const query = {
-      text: 'SELECT * FROM comments WHERE id = $1',
+      text: 'SELECT * FROM comments WHERE id = $1 and is_delete IS NULL',
       values: [id],
     };
 
@@ -63,9 +63,12 @@ class CommentRepositoryPostgres extends CommentRepository {
   }
 
   async deleteComment(id) {
+    const is_delete = new Date().toISOString();
     const query = {
-      text: 'DELETE FROM comments WHERE id = $1',
-      values: [id],
+      text: `update comments
+              set is_delete = $2
+              WHERE id = $1`,
+      values: [id, is_delete],
     };
 
     await this._pool.query(query);
