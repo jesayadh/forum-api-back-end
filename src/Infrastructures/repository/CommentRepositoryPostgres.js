@@ -2,12 +2,15 @@ const RegisteredComment = require('../../Domains/comments/entities/RegisteredCom
 const CommentRepository = require('../../Domains/comments/CommentRepository');
 const NotFoundError = require('../../Commons/exceptions/NotFoundError');
 const AuthorizationError = require('../../Commons/exceptions/AuthorizationError');
+const { mapCommentsToModel } = require('./utils');
+const ReplyRepositoryPostgres = require('./ReplyRepositoryPostgres');
 
 class CommentRepositoryPostgres extends CommentRepository {
   constructor(pool, idGenerator) {
     super();
     this._pool = pool;
     this._idGenerator = idGenerator;
+    this._reply = new ReplyRepositoryPostgres(pool,idGenerator);
   }
 
   async addComment(registerComment) {
@@ -23,6 +26,28 @@ class CommentRepositoryPostgres extends CommentRepository {
     const result = await this._pool.query(query);
 
     return new RegisteredComment({ ...result.rows[0] });
+  }
+
+  async getComments(threadId){
+    const queryComment = {
+      text: `select 
+                comments.id,
+                username,
+                date,
+                content
+              from comments
+              LEFT JOIN users ON comments.owner = users.id
+              where "threadId" = $1`,
+      values: [threadId],
+    };
+    const resultComment = await this._pool.query(queryComment);
+    
+    const tempComment = resultComment.rows.map(mapCommentsToModel);
+    for(let i=0;i<tempComment.length;i++){
+      tempComment[i].replies = await this._reply.getReplies(tempComment[i].id);
+    }
+
+    return tempComment;
   }
 
   async verifyAvailableComment(commentId) {

@@ -2,6 +2,7 @@ const RegisteredReply = require('../../Domains/replies/entities/RegisteredReply'
 const ReplyRepository = require('../../Domains/replies/ReplyRepository');
 const NotFoundError = require('../../Commons/exceptions/NotFoundError');
 const AuthorizationError = require('../../Commons/exceptions/AuthorizationError');
+const { mapRepliesToModel } = require('./utils');
 
 class ReplyRepositoryPostgres extends ReplyRepository {
   constructor(pool, idGenerator) {
@@ -25,17 +26,21 @@ class ReplyRepositoryPostgres extends ReplyRepository {
     return new RegisteredReply({ ...result.rows[0] });
   }
 
-  async verifyAvailableComment(commentId) {
-    const query = {
-      text: 'SELECT id FROM comments WHERE id = $1',
+  async getReplies(commentId){
+    const queryReply = {
+      text: `select 
+                replies.id,
+                username,
+                date,
+                content
+              from replies
+              LEFT JOIN users ON replies.owner = users.id
+              where "commentId" = $1`,
       values: [commentId],
     };
-
-    const result = await this._pool.query(query);
+    const resultReply = await this._pool.query(queryReply);
     
-    if (!result.rowCount) {
-      throw new NotFoundError('comment tidak tersedia');
-    }
+    return resultReply.rows.map(mapRepliesToModel);
   }
 
   async verifyReplyOwner(id, owner) {

@@ -2,12 +2,14 @@ const RegisteredThread = require('../../Domains/threads/entities/RegisteredThrea
 const ThreadRepository = require('../../Domains/threads/ThreadRepository');
 const NotFoundError = require('../../Commons/exceptions/NotFoundError');
 const { mapThreadToModel,mapCommentsToModel } = require('./utils');
+const CommentRepositoryPostgres = require('./CommentRepositoryPostgres');
 
 class ThreadRepositoryPostgres extends ThreadRepository {
   constructor(pool, idGenerator) {
     super();
     this._pool = pool;
     this._idGenerator = idGenerator;
+    this._comment = new CommentRepositoryPostgres(pool,idGenerator);
   }
 
   async addThread(registerThread) {
@@ -68,21 +70,11 @@ class ThreadRepositoryPostgres extends ThreadRepository {
     if (!resultThread.rows.length) {
       throw new NotFoundError('Thread tidak ditemukan');
     }
-
-    const queryComment = {
-      text: `select 
-                comments.id,
-                username,
-                date,
-                content
-              from comments
-              LEFT JOIN users ON comments.owner = users.id
-              where "threadId" = $1`,
-      values: [id],
-    };
-    const resultComment = await this._pool.query(queryComment);
+    
+    const resultComment = await this._comment.getComments(id);
+    
     let thread = resultThread.rows.map(mapThreadToModel)[0];
-    thread.comments = resultComment.rows.map(mapCommentsToModel);
+    thread.comments = resultComment;
 
     return thread;
   }
