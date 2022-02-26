@@ -8,7 +8,7 @@ describe('a RegisteredReply entities', () => {
     };
 
     // Action and Assert
-    expect(() => new RegisteredReply(payload)).toThrowError('REGISTERED_COMMENT.NOT_CONTAIN_NEEDED_PROPERTY');
+    expect(() => new RegisteredReply(payload)).toThrowError('REGISTERED_REPLY.NOT_CONTAIN_NEEDED_PROPERTY');
   });
 
   it('should throw error when payload did not meet data type specification', () => {
@@ -20,7 +20,7 @@ describe('a RegisteredReply entities', () => {
     };
 
     // Action and Assert
-    expect(() => new RegisteredReply(payload)).toThrowError('REGISTERED_COMMENT.NOT_MEET_DATA_TYPE_SPECIFICATION');
+    expect(() => new RegisteredReply(payload)).toThrowError('REGISTERED_REPLY.NOT_MEET_DATA_TYPE_SPECIFICATION');
   });
 
   it('should create registeredReply object correctly', () => {

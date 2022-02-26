@@ -44,19 +44,7 @@ class ReplyRepositoryPostgres extends ReplyRepository {
     return resultReply.rows.map(mapRepliesToModel);
   }
 
-  async verifyReplyOwner(id, owner) {
-    const query = {
-      text: 'SELECT * FROM replies WHERE id = $1 and is_delete IS NULL',
-      values: [id],
-    };
-    const result = await this._pool.query(query);
-    const Reply = result.rows[0];
-    if (Reply.owner !== owner) {
-      throw new AuthorizationError('Anda tidak berhak mengakses resource ini');
-    }
-  }
-
-  async checkAvailabilityReply(id) {
+  async verifyAvailableReply(id) {
     const query = {
       text: 'SELECT * FROM replies WHERE id = $1 and is_delete IS NULL',
       values: [id],
@@ -66,6 +54,18 @@ class ReplyRepositoryPostgres extends ReplyRepository {
 
     if (result.rows.length === 0) {
       throw new NotFoundError('replyId tidak ditemukan di database');
+    }
+  }
+
+  async verifyReplyOwner(id, owner) {
+    const query = {
+      text: 'SELECT * FROM replies WHERE id = $1 and is_delete IS NULL',
+      values: [id],
+    };
+    const result = await this._pool.query(query);
+    const Reply = result.rows[0];
+    if (Reply.owner !== owner) {
+      throw new AuthorizationError('Anda tidak berhak mengakses resource ini');
     }
   }
 

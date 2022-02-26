@@ -15,25 +15,6 @@ describe('CommentRepositoryPostgres', () => {
     await pool.end();
   });
 
-  describe('verifyAvailableThread function', () => {
-    it('should throw NotFoundError when threadId not available', async () => {
-      // Arrange
-      const commentRepositoryPostgres = new CommentRepositoryPostgres(pool, {});
-
-      // Action & Assert
-      await expect(commentRepositoryPostgres.verifyAvailableThread('thread-123')).rejects.toThrowError(NotFoundError);
-    });
-
-    it('should not throw NotFoundError when threadId available', async () => {
-      // Arrange
-      await ThreadsTableTestHelper.addThread({ id: 'thread-123' }); // memasukan thread baru dengan threadId thread-123
-      const commentRepositoryPostgres = new CommentRepositoryPostgres(pool, {});
-
-      // Action & Assert
-      await expect(commentRepositoryPostgres.verifyAvailableThread('thread-123')).resolves.not.toThrowError(NotFoundError);
-    });
-  });
-
   describe('addComment function', () => {
     it('should persist register comment and return registered comment correctly', async () => {
       // Arrange
@@ -74,8 +55,7 @@ describe('CommentRepositoryPostgres', () => {
       }));
     });
 
-
-    describe('checkAvailabilityComment function', () => {
+    describe('verifyAvailableComment function', () => {
       it('should throw NotFoundError if comment not available', async () => {
         // Arrange
         const commentRepository = new CommentRepositoryPostgres(pool);
@@ -95,6 +75,19 @@ describe('CommentRepositoryPostgres', () => {
         // Action & Assert
         await expect(commentRepository.verifyAvailableComment("comment-123"))
           .resolves.not.toThrow(NotFoundError);
+      });
+    });
+
+    describe('getComments', () => {
+      it('should get comment from database', async () => {
+        const commentRepository = new CommentRepositoryPostgres(pool);
+        const thread = 'thread-123';
+        await ThreadsTableTestHelper.addThread({id:thread});
+        await CommentsTableTestHelper.addComment(thread);
+  
+        const comments = await commentRepository.getComments(thread);
+  
+        expect(comments).toHaveLength(1);
       });
     });
 

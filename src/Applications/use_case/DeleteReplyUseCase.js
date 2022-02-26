@@ -8,7 +8,7 @@ class DeleteReplyUseCase {
   async execute(useCasePayload) {
     this._validatePayload(useCasePayload);
     const { owner,replyId } = useCasePayload;
-    await this._replyRepository.checkAvailabilityReply(replyId);
+    await this._replyRepository.verifyAvailableReply(replyId);
     await this._replyRepository.verifyReplyOwner(replyId,owner);
     await this._replyRepository.deleteReply(replyId);
   }

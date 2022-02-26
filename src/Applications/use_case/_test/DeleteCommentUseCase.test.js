@@ -33,10 +33,10 @@ describe('DeleteCommentUseCase', () => {
       owner: 'owner',
     };
     const mockCommentRepository = new CommentRepository();
-    mockCommentRepository.checkAvailabilityComment = jest.fn()
+    mockCommentRepository.verifyAvailableComment = jest.fn()
       .mockImplementation(() => Promise.resolve());
-      mockCommentRepository.verifyCommentOwner = jest.fn()
-        .mockImplementation(() => Promise.resolve());
+    mockCommentRepository.verifyCommentOwner = jest.fn()
+      .mockImplementation(() => Promise.resolve());
     mockCommentRepository.deleteComment = jest.fn()
       .mockImplementation(() => Promise.resolve());
 
@@ -48,7 +48,7 @@ describe('DeleteCommentUseCase', () => {
     await deleteCommentUseCase.execute(useCasePayload);
 
     // Assert
-    expect(mockCommentRepository.checkAvailabilityComment)
+    expect(mockCommentRepository.verifyAvailableComment)
       .toHaveBeenCalledWith(useCasePayload.commentId);
     expect(mockCommentRepository.deleteComment)
       .toHaveBeenCalledWith(useCasePayload.commentId);

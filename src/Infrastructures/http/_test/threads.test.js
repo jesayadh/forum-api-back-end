@@ -158,4 +158,64 @@ describe('/threads endpoint', () => {
       expect(responseJson.message).toEqual('tidak dapat membuat thread baru karena tipe data tidak sesuai');
     });
   });
+
+  describe('when GET /threads', () => {
+    it('should response 200 and persisted thread', async () => {
+      // Arrange
+      const requestPayload = {
+        title: 'dicoding',
+        body: 'Dicoding Indonesia',
+      };
+      const userPayload = {
+        username: 'dicoding',
+        password: 'secret',
+      };
+      // eslint-disable-next-line no-undef
+      const server = await createServer(container);
+      // add user
+      await server.inject({
+        method: 'POST',
+        url: '/users',
+        payload: {
+          username: 'dicoding',
+          password: 'secret',
+          fullname: 'Dicoding Indonesia',
+        },
+      });
+      // Action
+      const getAuth = await server.inject({
+        method: 'POST',
+        url: '/authentications',
+        payload: userPayload,
+      });
+      const { accessToken } = getAuth.result.data;
+
+      // Action
+      const responseThread = await server.inject({
+        method: 'POST',
+        url: '/threads',
+        payload: requestPayload,
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+      const responseJsonThread = JSON.parse(responseThread.payload);
+
+      const response = await server.inject({
+        method: 'GET',
+        url: '/threads/'+responseJsonThread.data.addedThread.id,
+        payload: requestPayload,
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+
+      // Assert
+      const responseJson = JSON.parse(response.payload);
+      expect(response.statusCode).toEqual(200);
+      expect(responseJson.status).toEqual('success');
+      expect(responseJson.data.thread).toBeDefined();
+      expect(responseJson.data.thread.title).toEqual(requestPayload.title);
+    });
+  });
 });

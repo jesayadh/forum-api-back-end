@@ -27,19 +27,6 @@ class ThreadRepositoryPostgres extends ThreadRepository {
     return new RegisteredThread({ ...result.rows[0] });
   }
 
-  async checkAvailabilityThread(id) {
-    const query = {
-      text: 'SELECT * FROM threads WHERE id = $1',
-      values: [id],
-    };
-
-    const result = await this._pool.query(query);
-
-    if (result.rows.length === 0) {
-      throw new NotFoundError('threadId tidak ditemukan di database');
-    }
-  }
-
   async verifyAvailableThread(threadId) {
     const query = {
       text: 'SELECT id FROM threads WHERE id = $1',
@@ -67,9 +54,6 @@ class ThreadRepositoryPostgres extends ThreadRepository {
         values: [id],
     };
     const resultThread = await this._pool.query(queryThread);
-    if (!resultThread.rows.length) {
-      throw new NotFoundError('Thread tidak ditemukan');
-    }
     
     const resultComment = await this._comment.getComments(id);
     

@@ -3,7 +3,7 @@ class CommentRepository {
       throw new Error('COMMENT_REPOSITORY.METHOD_NOT_IMPLEMENTED');
   }
 
-  async getComment(registerComment) {
+  async getComments(registerComment) {
       throw new Error('COMMENT_REPOSITORY.METHOD_NOT_IMPLEMENTED');
   }
 

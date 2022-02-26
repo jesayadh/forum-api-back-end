@@ -13,6 +13,15 @@ const CommentsTableTestHelper = {
     await pool.query(query);
   },
 
+  async getComments() {
+    const query = {
+      text: 'SELECT * FROM comments',
+    };
+
+    const result = await pool.query(query);
+    return result.rows;
+  },
+
   async findCommentsById(id) {
     const query = {
       text: 'SELECT * FROM comments WHERE id = $1',

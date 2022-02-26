@@ -15,6 +15,7 @@ describe('a RegisterReply entities', () => {
     // Arrange
     const payload = {
       content: 123,
+      threadId: {},
       commentId: {},
       owner: {},
     };
@@ -27,6 +28,7 @@ describe('a RegisterReply entities', () => {
     // Arrange
     const payload = {
       content: 'dicoding',
+      threadId: 'thread-123',
       commentId: 'comment-123',
       owner: 'user-123'
     };
