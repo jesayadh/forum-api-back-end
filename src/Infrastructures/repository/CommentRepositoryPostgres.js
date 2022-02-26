@@ -37,7 +37,8 @@ class CommentRepositoryPostgres extends CommentRepository {
                 content
               from comments
               LEFT JOIN users ON comments.owner = users.id
-              where "threadId" = $1`,
+              where "threadId" = $1
+              order by comments.date`,
       values: [threadId],
     };
     const resultComment = await this._pool.query(queryComment);

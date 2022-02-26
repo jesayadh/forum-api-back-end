@@ -35,7 +35,8 @@ class ReplyRepositoryPostgres extends ReplyRepository {
                 content
               from replies
               LEFT JOIN users ON replies.owner = users.id
-              where "commentId" = $1`,
+              where "commentId" = $1
+              order by replies.date`,
       values: [commentId],
     };
     const resultReply = await this._pool.query(queryReply);
