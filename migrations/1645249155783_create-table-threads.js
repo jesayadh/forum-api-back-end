@@ -22,6 +22,8 @@ exports.up = (pgm) => {
         notNull: false,
       },
     });
+    
+    pgm.addConstraint('threads', 'fk_forum.user_id_users.id', 'FOREIGN KEY(owner) REFERENCES users(id) ON DELETE CASCADE');
 };
 
 exports.down = (pgm) => {

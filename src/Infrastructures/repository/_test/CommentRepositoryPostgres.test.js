@@ -1,5 +1,6 @@
 const CommentsTableTestHelper = require('../../../../tests/CommentsTableTestHelper');
 const ThreadsTableTestHelper = require('../../../../tests/ThreadsTableTestHelper');
+const UsersTableTestHelper = require('../../../../tests/UsersTableTestHelper');
 const NotFoundError = require('../../../Commons/exceptions/NotFoundError');
 const RegisterComment = require('../../../Domains/comments/entities/RegisterComment');
 const RegisteredComment = require('../../../Domains/comments/entities/RegisteredComment');
@@ -9,6 +10,8 @@ const CommentRepositoryPostgres = require('../CommentRepositoryPostgres');
 describe('CommentRepositoryPostgres', () => {
   afterEach(async () => {
     await CommentsTableTestHelper.cleanTable();
+    await ThreadsTableTestHelper.cleanTable();
+    await UsersTableTestHelper.cleanTable();
   });
 
   afterAll(async () => {
@@ -18,6 +21,8 @@ describe('CommentRepositoryPostgres', () => {
   describe('addComment function', () => {
     it('should persist register comment and return registered comment correctly', async () => {
       // Arrange
+      await UsersTableTestHelper.addUser({ username: 'dicoding' });
+      await ThreadsTableTestHelper.addThread({ title: 'dicoding' });
       const registerComment = new RegisterComment({
         content: 'dicoding',
         threadId:'thread-123',
@@ -36,6 +41,8 @@ describe('CommentRepositoryPostgres', () => {
 
     it('should return registered comment correctly', async () => {
       // Arrange
+      await UsersTableTestHelper.addUser({ username: 'dicoding' });
+      await ThreadsTableTestHelper.addThread({ title: 'dicoding' });
       const registerComment = new RegisterComment({
         content: 'dicoding',
         threadId:'thread-123',
@@ -58,6 +65,8 @@ describe('CommentRepositoryPostgres', () => {
     describe('verifyAvailableComment function', () => {
       it('should throw NotFoundError if comment not available', async () => {
         // Arrange
+        await UsersTableTestHelper.addUser({ username: 'dicoding' });
+        await ThreadsTableTestHelper.addThread({ title: 'dicoding' });
         const commentRepository = new CommentRepositoryPostgres(pool);
         const comment = 'comment';
   
@@ -68,6 +77,8 @@ describe('CommentRepositoryPostgres', () => {
   
       it('should not throw NotFoundError if comment available', async () => {
         // Arrange
+        await UsersTableTestHelper.addUser({ username: 'dicoding' });
+        await ThreadsTableTestHelper.addThread({ title: 'dicoding' });
         const commentRepository = new CommentRepositoryPostgres(pool);
         const content = 'content';
         await CommentsTableTestHelper.addComment(content);
@@ -80,6 +91,7 @@ describe('CommentRepositoryPostgres', () => {
 
     describe('getComments', () => {
       it('should get comment from database', async () => {
+        await UsersTableTestHelper.addUser({ username: 'dicoding' });
         const commentRepository = new CommentRepositoryPostgres(pool);
         const thread = 'thread-123';
         await ThreadsTableTestHelper.addThread({id:thread});
@@ -94,6 +106,8 @@ describe('CommentRepositoryPostgres', () => {
     describe('deleteComment', () => {
       it('should delete comment from database', async () => {
         // Arrange
+        await UsersTableTestHelper.addUser({ username: 'dicoding' });
+        await ThreadsTableTestHelper.addThread({ title: 'dicoding' });
         const commentRepository = new CommentRepositoryPostgres(pool);
         const comment = 'comment';
         await CommentsTableTestHelper.addComment(comment);

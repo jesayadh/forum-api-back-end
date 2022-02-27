@@ -4,10 +4,12 @@ const RegisteredThread = require('../../../Domains/threads/entities/RegisteredTh
 const pool = require('../../database/postgres/pool');
 const ThreadRepositoryPostgres = require('../ThreadRepositoryPostgres');
 const NotFoundError = require('../../../Commons/exceptions/NotFoundError');
+const UsersTableTestHelper = require('../../../../tests/UsersTableTestHelper');
 
 describe('ThreadRepositoryPostgres', () => {
   afterEach(async () => {
     await ThreadsTableTestHelper.cleanTable();
+    await UsersTableTestHelper.cleanTable();
   });
 
   afterAll(async () => {
@@ -17,6 +19,7 @@ describe('ThreadRepositoryPostgres', () => {
   describe('addThread function', () => {
     it('should persist register thread and return registered thread correctly', async () => {
       // Arrange
+      await UsersTableTestHelper.addUser({ id: 'user-123' });
       const registerThread = new RegisterThread({
         title: 'dicoding',
         body: 'Dicoding Indonesia',
@@ -35,6 +38,7 @@ describe('ThreadRepositoryPostgres', () => {
 
     it('should return registered thread correctly', async () => {
       // Arrange
+      await UsersTableTestHelper.addUser({ username: 'dicoding' });
       const registerThread = new RegisterThread({
         title: 'dicoding',
         body: 'Dicoding Indonesia',
@@ -57,6 +61,7 @@ describe('ThreadRepositoryPostgres', () => {
 
   describe('getThreadById', () => {
     it('should get thread from database', async () => {
+      await UsersTableTestHelper.addUser({ username: 'dicoding' });
       const threadRepository = new ThreadRepositoryPostgres(pool);
       const thread = 'thread-123';
       await ThreadsTableTestHelper.addThread({id:thread});
@@ -81,6 +86,7 @@ describe('ThreadRepositoryPostgres', () => {
 
     it('should not throw NotFoundError if thread available', async () => {
       // Arrange
+      await UsersTableTestHelper.addUser({ username: 'dicoding' });
       const threadRepository = new ThreadRepositoryPostgres(pool);
       const content = 'content';
       await ThreadsTableTestHelper.addThread(content);

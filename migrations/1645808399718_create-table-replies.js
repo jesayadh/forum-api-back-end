@@ -26,6 +26,9 @@ exports.up = (pgm) => {
         notNull: false,
       },
     });
+
+    pgm.addConstraint('replies', 'fk_forum.user_id_users.id', 'FOREIGN KEY(owner) REFERENCES users(id) ON DELETE CASCADE');
+    pgm.addConstraint('replies', 'fk_forum.comment_id_comments.id', 'FOREIGN KEY("commentId") REFERENCES comments(id) ON DELETE CASCADE');
 };
 
 exports.down = (pgm) => {
