@@ -32,7 +32,8 @@ class ReplyRepositoryPostgres extends ReplyRepository {
                 replies.id,
                 username,
                 date,
-                content
+                content,
+                is_delete
               from replies
               LEFT JOIN users ON replies.owner = users.id
               where "commentId" = $1
@@ -40,8 +41,13 @@ class ReplyRepositoryPostgres extends ReplyRepository {
       values: [commentId],
     };
     const resultReply = await this._pool.query(queryReply);
-    
-    return resultReply.rows.map(mapRepliesToModel);
+    const replies = resultReply.rows.map(mapRepliesToModel);
+    for(let i=0;i<replies.length;i++){
+      if(replies[i].is_delete!=undefined)
+        replies[i].content="**balasan telah dihapus**";
+      delete replies[i].is_delete;
+    }
+    return replies;
   }
 
   async verifyAvailableReply(id) {
@@ -73,8 +79,7 @@ class ReplyRepositoryPostgres extends ReplyRepository {
     const is_delete = new Date().toISOString();
     const query = {
       text: `update replies
-              set 
-                content = '**balasan telah dihapus**',
+              set
                 is_delete = $2
               WHERE id = $1`,
       values: [id, is_delete],

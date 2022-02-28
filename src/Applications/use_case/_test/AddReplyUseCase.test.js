@@ -48,6 +48,9 @@ describe('AddReplyUseCase', () => {
 
     // Assert
     expect(registeredReply).toStrictEqual(expectedRegisteredReply);
+    expect(mockThreadRepository.verifyAvailableThread).toBeCalledWith(useCasePayload.threadId)
+    expect(mockCommentRepository.verifyAvailableComment).toBeCalledWith(useCasePayload.commentId)
+
     expect(mockReplyRepository.addReply).toBeCalledWith(new RegisterReply({
       content: useCasePayload.content,
       threadId: useCasePayload.threadId,

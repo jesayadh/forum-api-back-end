@@ -34,7 +34,8 @@ class CommentRepositoryPostgres extends CommentRepository {
                 comments.id,
                 username,
                 date,
-                content
+                content,
+                is_delete
               from comments
               LEFT JOIN users ON comments.owner = users.id
               where "threadId" = $1
@@ -42,13 +43,13 @@ class CommentRepositoryPostgres extends CommentRepository {
       values: [threadId],
     };
     const resultComment = await this._pool.query(queryComment);
-    
-    const tempComment = resultComment.rows.map(mapCommentsToModel);
-    for(let i=0;i<tempComment.length;i++){
-      tempComment[i].replies = await this._reply.getReplies(tempComment[i].id);
+    const comments = resultComment.rows.map(mapCommentsToModel);
+    for(let i=0;i<comments.length;i++){
+      if(comments[i].is_delete!=undefined)
+        comments[i].content="**komentar telah dihapus**";
+      delete comments[i].is_delete;
     }
-
-    return tempComment;
+    return comments;
   }
 
   async verifyAvailableComment(commentId) {
@@ -80,8 +81,7 @@ class CommentRepositoryPostgres extends CommentRepository {
     const is_delete = new Date().toISOString();
     const query = {
       text: `update comments
-              set 
-                content = '**komentar telah dihapus**',
+              set
                 is_delete = $2
               WHERE id = $1`,
       values: [id, is_delete],

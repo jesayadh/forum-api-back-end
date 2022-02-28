@@ -2,6 +2,7 @@ const CommentsTableTestHelper = require('../../../../tests/CommentsTableTestHelp
 const ThreadsTableTestHelper = require('../../../../tests/ThreadsTableTestHelper');
 const UsersTableTestHelper = require('../../../../tests/UsersTableTestHelper');
 const NotFoundError = require('../../../Commons/exceptions/NotFoundError');
+const AuthorizationError = require('../../../Commons/exceptions/AuthorizationError');
 const RegisterComment = require('../../../Domains/comments/entities/RegisterComment');
 const RegisteredComment = require('../../../Domains/comments/entities/RegisteredComment');
 const pool = require('../../database/postgres/pool');
@@ -86,6 +87,35 @@ describe('CommentRepositoryPostgres', () => {
         // Action & Assert
         await expect(commentRepository.verifyAvailableComment("comment-123"))
           .resolves.not.toThrow(NotFoundError);
+      });
+    });
+
+    
+    describe('verifyCommentOwner function', () => {
+      it('should throw AuthorizationError if comment not available', async () => {
+        // Arrange
+        await UsersTableTestHelper.addUser({ id: 'user-123' });
+        await ThreadsTableTestHelper.addThread({ id: 'thread-123' });
+        const commentRepository = new CommentRepositoryPostgres(pool);
+        const comment = 'comment-123';
+        await CommentsTableTestHelper.addComment({owner:'user-123'});
+  
+        // Action & Assert
+        await expect(commentRepository.verifyCommentOwner(comment,"user-234"))
+          .rejects.toThrow(AuthorizationError);
+      });
+  
+      it('should not throw AuthorizationError if comment available', async () => {
+        // Arrange
+        await UsersTableTestHelper.addUser({ id: 'user-123' });
+        await ThreadsTableTestHelper.addThread({ id: 'thread-123' });
+        const commentRepository = new CommentRepositoryPostgres(pool);
+        const content = 'content';
+        await CommentsTableTestHelper.addComment(content);
+  
+        // Action & Assert
+        await expect(commentRepository.verifyCommentOwner("comment-123","user-123"))
+          .resolves.not.toThrow(AuthorizationError);
       });
     });
 

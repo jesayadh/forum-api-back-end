@@ -17,11 +17,13 @@ const mapCommentsToModel = ({
     username,
     date,
     content,
+    is_delete,
 }) => ({
     id,
     username,
     date,
     content,
+    is_delete,
 });
 
 const mapRepliesToModel = ({
@@ -29,11 +31,13 @@ const mapRepliesToModel = ({
     username,
     date,
     content,
+    is_delete,
 }) => ({
     id,
     username,
     date,
     content,
+    is_delete,
 });
 
 module.exports = { mapThreadToModel,mapCommentsToModel,mapRepliesToModel };
